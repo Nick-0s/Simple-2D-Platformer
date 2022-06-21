@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Rigidbody2D))]
@@ -10,18 +11,25 @@ public class Player : MonoBehaviour
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpHeight;
     [SerializeField] private float _distanceToCheck;
+    [SerializeField] private CircleCollider2D _groundChecker;
+    [SerializeField] private LayerMask Ground;
 
+    static event UnityAction OnDeath;
     private Animator _animator;
     private Rigidbody2D _rigidBody;
     private Vector2 _moveVector;
     private bool _isGrounded;
-    private bool _isFaceToTheRight;
+    private bool _isFacedToTheRight;
+    private int _coins;
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
         _rigidBody = GetComponent<Rigidbody2D>();
-        _isFaceToTheRight = true;
+        _isFacedToTheRight = true;
+        _coins = 0;
+        OnDeath += DisablePlayer;
+        OnDeath += PrintGameOverMessageToConsole;
     }
     
     private void Update()
@@ -32,12 +40,20 @@ public class Player : MonoBehaviour
         Jump();
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.TryGetComponent<Coin>(out Coin coin))
+            PickCoin(coin);
+        else if (other.TryGetComponent<Enemy>(out Enemy enemy))
+            OnDeath.Invoke();
+    }
+
     private void ReflectPlayer()
     {
-        if (_moveVector.x > 0 && _isFaceToTheRight == false || _moveVector.x < 0 && _isFaceToTheRight)
+        if (_moveVector.x > 0 && _isFacedToTheRight == false || _moveVector.x < 0 && _isFacedToTheRight)
         {
             transform.localScale *= new Vector2(-1, 1);
-            _isFaceToTheRight = !(_isFaceToTheRight);
+            _isFacedToTheRight = !(_isFacedToTheRight);
         }
     }
 
@@ -64,7 +80,23 @@ public class Player : MonoBehaviour
 
     private void CheckingGround()
     {
-        _isGrounded = Physics2D.Raycast(transform.position, Vector2.down, _distanceToCheck);
-        Debug.Log(_isGrounded);
+        _isGrounded = Physics2D.OverlapCircle(_groundChecker.transform.position, _groundChecker.radius, Ground);
+        _animator.SetBool(AnimatorPlayerController.IsOnGround, _isGrounded);
+    }
+
+    private void PickCoin(Coin coin)
+    {
+        _coins++;
+        Destroy(coin.gameObject);
+    }
+
+    private void DisablePlayer()
+    {
+        gameObject.SetActive(false);
+    }
+
+    private void PrintGameOverMessageToConsole()
+    {
+        Debug.Log("GameOver");
     }
 }
