@@ -29,7 +29,6 @@ public class Player : MonoBehaviour
         _isFacedToTheRight = true;
         _coins = 0;
         OnDeath += DisablePlayer;
-        OnDeath += PrintGameOverMessageToConsole;
     }
     
     private void Update()
@@ -52,7 +51,9 @@ public class Player : MonoBehaviour
     {
         if (_moveVector.x > 0 && _isFacedToTheRight == false || _moveVector.x < 0 && _isFacedToTheRight)
         {
-            transform.localScale *= new Vector2(-1, 1);
+            Vector2 vectorToReflectPlayer = new Vector2(-1, 1);
+
+            transform.localScale *= vectorToReflectPlayer;
             _isFacedToTheRight = !(_isFacedToTheRight);
         }
     }
@@ -75,7 +76,9 @@ public class Player : MonoBehaviour
 
     private float GetJumpForce(float jumpHeight)
     {
-        return Mathf.Sqrt(jumpHeight * -2 * (Physics2D.gravity.y * _rigidBody.gravityScale));
+        int jumpCoefficient = -2;
+
+        return Mathf.Sqrt(jumpHeight * jumpCoefficient * (Physics2D.gravity.y * _rigidBody.gravityScale));
     }
 
     private void CheckingGround()
@@ -93,10 +96,5 @@ public class Player : MonoBehaviour
     private void DisablePlayer()
     {
         gameObject.SetActive(false);
-    }
-
-    private void PrintGameOverMessageToConsole()
-    {
-        Debug.Log("GameOver");
     }
 }
