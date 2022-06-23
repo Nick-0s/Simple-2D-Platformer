@@ -1,19 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CoinSpawnPoint : MonoBehaviour
 {
-    private bool _isEmpty;
     private Coin _coin;
 
     public bool CheckForCoin()
     {
-        return _coin;
+        return _coin != null;
     }
 
     public void SetCoin(Coin coin)
     {
-        _coin = coin;
+        if(_coin == null)
+            _coin = coin;
     }
 }

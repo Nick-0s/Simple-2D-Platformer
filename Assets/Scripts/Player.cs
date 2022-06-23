@@ -33,4 +33,9 @@ public class Player : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+
+    private void OnDisable()
+    {
+        Died -= DisablePlayer;
+    }
 }
