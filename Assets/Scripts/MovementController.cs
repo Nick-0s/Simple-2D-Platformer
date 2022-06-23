@@ -15,17 +15,21 @@ public class MovementController : MonoBehaviour
     private Vector2 _moveVector;
     private bool _isGrounded;
     private bool _isFacedToTheRight;
+    private float _jumpForce;
 
     private void Awake()
     {
+        int jumpCoefficient = -2;
+
         _animator = GetComponent<Animator>();
         _rigidBody = GetComponent<Rigidbody2D>();
         _isFacedToTheRight = true;
+        _jumpForce = Mathf.Sqrt(_jumpHeight * jumpCoefficient * (Physics2D.gravity.y * _rigidBody.gravityScale));
     }
     
     private void Update()
     {
-        CheckingGround();
+        CheckForGround();
         Run();
         ReflectPlayer();
         Jump();
@@ -55,17 +59,10 @@ public class MovementController : MonoBehaviour
     private void Jump()
     {
         if(_isGrounded && Input.GetKeyDown(KeyCode.Space))
-            _rigidBody.AddForce(Vector2.up * GetJumpForce(_jumpHeight), ForceMode2D.Impulse);
+            _rigidBody.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
     }
 
-    private float GetJumpForce(float jumpHeight)
-    {
-        int jumpCoefficient = -2;
-
-        return Mathf.Sqrt(jumpHeight * jumpCoefficient * (Physics2D.gravity.y * _rigidBody.gravityScale));
-    }
-
-    private void CheckingGround()
+    private void CheckForGround()
     {
         _isGrounded = Physics2D.OverlapCircle(_groundChecker.transform.position, _groundChecker.radius, Ground);
         _animator.SetBool(AnimatorPlayerController.IsOnGround, _isGrounded);

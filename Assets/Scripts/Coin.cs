@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour
 {
-    public int value {get; private set;}
+    public int Value {get; private set;}
 
     private void Awake()
     {
-        value = 1;
+        Value = 1;
     }
 }

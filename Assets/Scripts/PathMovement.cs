@@ -46,7 +46,7 @@ public class PathMovement : MonoBehaviour
 
     private void ReflectObjectInMovementDirection()
     {
-        if(_targetPoint.position.x - transform.position.x > 0)
+        if(_targetPoint.position.x > transform.position.x)
             _spriteRenderer.flipX = true;
         else
             _spriteRenderer.flipX = false;

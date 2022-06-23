@@ -7,9 +7,9 @@ public class CoinSpawnPoint : MonoBehaviour
     private bool _isEmpty;
     private Coin _coin;
 
-    public bool CheckForCoinPresence()
+    public bool CheckForCoin()
     {
-        return _coin? true : false;
+        return _coin;
     }
 
     public void SetCoin(Coin coin)

@@ -39,7 +39,7 @@ public class CoinSpawner : MonoBehaviour
             {
                 pointIndex = Random.Range(minIndexValue, _points.Length);
 
-                if(_points[pointIndex].CheckForCoinPresence() == false)
+                if(_points[pointIndex].CheckForCoin() == false)
                 {
                     CreateNewCoinAtPoint(_points[pointIndex]);                    
                     isCoinSpawened = true;
