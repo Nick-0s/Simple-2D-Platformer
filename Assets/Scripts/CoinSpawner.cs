@@ -1,22 +1,19 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CoinSpawner : MonoBehaviour
 {
     [SerializeField] private Coin _coin;
     [SerializeField] private Transform _spawnPoints;
+    [SerializeField] private float _spawnPeriod;
 
-    private Transform[] _points;
+    private CoinSpawnPoint[] _points;
 
     private void Awake()
     {
-        _points = new Transform[_spawnPoints.childCount];
+        _points = _spawnPoints.GetComponentsInChildren<CoinSpawnPoint>();
 
-        for (int i = 0; i < _spawnPoints.childCount; i++)
-            _points[i] = _spawnPoints.GetChild(i);
-
-        foreach(Transform point in _points)
+        foreach(CoinSpawnPoint point in _points)
         {
             CreateNewCoinAtPoint(point);
         }
@@ -29,21 +26,33 @@ public class CoinSpawner : MonoBehaviour
 
     private IEnumerator Spawn()
     {
-        var spawnDelay = new WaitForSeconds(2f);
+        var spawnDelay = new WaitForSeconds(_spawnPeriod);
         int minIndexValue = 0;
         int pointIndex;
+        bool isCoinSpawened;
 
         while(true)
         {
-            pointIndex = Random.Range(minIndexValue, _points.Length);
-            CreateNewCoinAtPoint(_points[pointIndex]);
+            isCoinSpawened = false;
+
+            for(int i = 0; i < _points.Length && isCoinSpawened == false; i++)
+            {
+                pointIndex = Random.Range(minIndexValue, _points.Length);
+
+                if(_points[pointIndex].CheckForCoinPresence() == false)
+                {
+                    CreateNewCoinAtPoint(_points[pointIndex]);                    
+                    isCoinSpawened = true;
+                }
+            }
 
             yield return spawnDelay;
         }
     }
 
-    private void CreateNewCoinAtPoint(Transform point)
+    private void CreateNewCoinAtPoint(CoinSpawnPoint point)
     {
-        Coin newCoin = Instantiate(_coin, point.position, Quaternion.identity);
+        Coin newCoin = Instantiate(_coin, point.transform.position, Quaternion.identity);
+        point.SetCoin(newCoin);
     }
 }
