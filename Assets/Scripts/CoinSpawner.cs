@@ -34,11 +34,10 @@ public class CoinSpawner : MonoBehaviour
         while(true)
         {
             isCoinSpawened = false;
-
             for(int i = 0; i < _points.Length && isCoinSpawened == false; i++)
             {
-                pointIndex = Random.Range(minIndexValue, _points.Length);
 
+                pointIndex = Random.Range(minIndexValue, _points.Length);
                 if(_points[pointIndex].CheckForCoin() == false)
                 {
                     CreateNewCoinAtPoint(_points[pointIndex]);                    
